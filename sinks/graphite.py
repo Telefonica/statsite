@@ -100,7 +100,7 @@ class GraphiteStore(object):
         # Serialize writes to the socket
         try:
             self._write_metric(data)
-        except StandardError:
+        except Exception:
             self.logger.exception("Failed to write out the metrics!")
 
     def flush_pickle(self):
@@ -126,7 +126,7 @@ class GraphiteStore(object):
 
         try:
             self._write_metric(message)
-        except StandardError:
+        except Exception:
             self.logger.exception("Failed to write out the metrics!")
 
     def close(self):
@@ -137,7 +137,7 @@ class GraphiteStore(object):
         try:
             if self.sock:
                 self.sock.close()
-        except StandardError:
+        except Exception:
             self.logger.warning("Failed to close connection!")
 
     def _create_socket(self):
@@ -146,14 +146,14 @@ class GraphiteStore(object):
         sock.settimeout(self.socket_timeout)
         try:
             sock.connect((self.host, self.port))
-        except StandardError:
+        except Exception:
             self.logger.error("Failed to connect!")
             sock = None
         return sock
 
     def _write_metric(self, metric):
         """Tries to write a string to the socket, reconnecting on any errors"""
-        for _ in xrange(self.attempts):
+        for _ in range(self.attempts):
             if self.sock:
                 try:
                     self.sock.sendall(metric)
