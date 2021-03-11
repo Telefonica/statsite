@@ -20,9 +20,11 @@ class Sinks:
 
     def print_errors(self):
         for idx, sink in enumerate(self.sinks):
-            (out, _) = sink.communicate()
+            (out, err) = sink.communicate()
             if out:
-                print(f'Error in {idx + 1}: {out}')
+                print(f'Output in {idx + 1}: {out}')
+            if err:
+                print(f'Error in {idx + 1}: {err}')
 
 
 sinks = Sinks(sys.argv[1:])
