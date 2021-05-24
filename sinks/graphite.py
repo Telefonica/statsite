@@ -99,7 +99,7 @@ class GraphiteStore(object):
 
         # Serialize writes to the socket
         try:
-            self._write_metric(data)
+            self._write_metric(data.encode("utf-8"))
         except Exception:
             self.logger.exception("Failed to write out the metrics!")
 
