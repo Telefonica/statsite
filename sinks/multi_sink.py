@@ -1,7 +1,12 @@
+import logging
 import subprocess
 import sys
 
 MAX_READLINES = 1000
+
+# Initialize the logger
+logging.basicConfig()
+logger = logging.getLogger("statsite.multi_sink")
 
 
 class Sinks:
@@ -10,7 +15,7 @@ class Sinks:
         self.sinks = []
         self.lines_sent = 0
         for idx, param in enumerate(sink_commands):
-            print(f'Executing {idx + 1}: {param}')
+            logger.info(f'Executing sink {idx + 1}: {param}')
             self.sinks.append(subprocess.Popen(param.split(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT))
 
     def write_lines(self, lines):
@@ -22,9 +27,9 @@ class Sinks:
         for idx, sink in enumerate(self.sinks):
             (out, err) = sink.communicate()
             if out:
-                print(f'Output in {idx + 1}: {out}')
+                logger.error(f'Output in sink {idx + 1}: {out}')
             if err:
-                print(f'Error in {idx + 1}: {err}')
+                logger.error(f'Error in sink {idx + 1}: {err}')
 
 
 sinks = Sinks(sys.argv[1:])
@@ -36,4 +41,4 @@ while input_lines:
 
 sinks.print_errors()
 
-print(f"{sinks.lines_sent} lines sent")
+logger.info(f"{sinks.lines_sent} lines sent")
